@@ -615,7 +615,7 @@ class C {
 * 接口可以用来描述对象的形状，还可以在面向对象编程中表示为行为的抽象
 * 接口就是把一些类中共有的属性和方法抽象出来,可以用来约束实现此接口的类
 
-#### 7.1 初探
+### 7.1 初探
 
 ```ts
 // 接口用来描述对象的形状，少属性或者多属性都会报错
@@ -658,8 +658,29 @@ class Person implements SpeakChinese {
   }
 }
 ```
+### 7.3 对象类型接口
 
-### 7.3 函数类型的接口
+```ts
+// 任意属性的两种写法
+// 1、[propName: string]: any
+// 2、继承内置接口Records<string, any>
+interface Props {
+  name: string,
+  age: number,
+  [propName: string]: any
+}
+interface Props2 extends Record<string, any> {
+  name: string,
+  age: number
+}
+let props: Props = {
+  name: 'lin',
+  age: 12,
+  home: 'sd'
+}
+```
+
+### 7.4 函数类型的接口
 
 * 对传入函数的参数和返回值进行约束
 
@@ -672,7 +693,7 @@ let cost:discount = function(price:number):number{
 }
 ```
 
-### 7.4 可索引的接口
+### 7.5 可索引的接口
 
 * 描述那些能够“通过索引得到”的类型，如数组和对象
 * 描述了索引的类型，和相应的索引返回值类型。
@@ -692,7 +713,7 @@ let obj: Interface2 = {
 }
 ```
 
-### 7.5 类接口
+### 7.6 类接口
 
 * 对类的约束
 
@@ -798,18 +819,155 @@ function swap<A,B>(tuple:[A,B]):[B,A]{
 let swapped = swap<string,number>(['a',1])
 ```
 
-### 泛型类型别名
+### 8.5 泛型类型别名
 * 复杂的泛型类型可以命名泛型别名
 ```ts
 type Cart<T> = {list:T[]} | T[]
 let c1:Cart<string> = {list:['1']}
 let c2:Cart<number> = [1]
 ```
-#### 泛型接口 VS 泛型类型别名
-|泛型接口|泛型别名|
-|--|--|
-|创建一个新的名字|并不创建新的名字|
-|可以被extends和implements|不可以|
+### 8.6 type VS interface
+
+1. 两者都可以用来描述对象或函数的类型，但是语法不同。
+
+```ts
+// interface
+interface Point {
+  x: number
+  y: number
+}
+
+interface SetPoint {
+  (x: number, y: number): void
+}
+// type
+type Point = {
+  x: number
+  y: number
+};
+
+type SetPoint = (x: number, y: number) => void
+```
+
+2. 与接口不同，类型别名还可以用于其他类型，如基本类型（原始值）、联合类型、元组。
+
+```ts
+// primitive
+type Name = string
+
+// object
+type PartialPointX = { x: number; }
+type PartialPointY = { y: number; }
+
+// union
+type PartialPoint = PartialPointX | PartialPointY
+
+// tuple
+type Data = [number, string]
+
+// dom
+let div = document.createElement('div')
+type B = typeof div
+```
+
+3. 两者都可以被extend,但语法不同(有些资料说type不能extend,亲测可用)
+
+```ts
+// Interface extends interface
+interface PartialPointX { x: number }
+interface Point extends PartialPointX { y: number }
+
+// Type alias extends type alias
+type PartialPointX = { x: number }
+type Point = PartialPointX & { y: number }
+
+// Interface extends type alias
+type PartialPointX = { x: number }
+interface Point extends PartialPointX { y: number }
+
+// Type alias extends interface
+interface PartialPointX { x: number }
+type Point = PartialPointX & { y: number }
+```
+
+4. 类可以以相同的方式实现接口或类型别名,不能实现联合类型的类型别名
+
+```ts
+interface Point {
+  x: number
+  y: number
+}
+
+class SomePoint implements Point {
+  x: 1
+  y: 2
+}
+
+type Point2 = {
+  x: number
+  y: number
+};
+
+class SomePoint2 implements Point2 {
+  x: 1
+  y: 2
+}
+
+type PartialPoint = { x: number; } | { y: number }
+
+// FIXME: can not implement a union type
+class SomePartialPoint implements PartialPoint {
+  x: 1
+  y: 2
+}
+```
+
+5. 与类型别名不同，接口可以定义多次，并将被视为单个接口(合并所有声明的成员)
+
+```ts
+interface Point { x: number }
+interface Point { y: number }
+
+const point: Point = { x: 1, y: 2 }
+```
+
+6. type 能使用 in 关键字生成映射类型，但 interface 不行。
+
+```ts
+type Keys = "firstname" | "surname"
+
+type DudeType = {
+  [key in Keys]: string
+}
+
+const test: DudeType = {
+  firstname: "Pawel",
+  surname: "Grzybek"
+}
+
+// 报错
+//interface DudeType2 {
+//  [key in keys]: string
+//}
+```
+
+7. type不能被直接export
+
+```ts
+export default interface Config {
+  name: string
+}
+
+// export default type Config1 = {
+//   name: string
+// }
+// 会报错
+
+type Config2 = {
+    name: string
+}
+export default Config2
+```
 
 ## 9.类型兼容性
 
@@ -1185,3 +1343,5 @@ npm install --save @types/lodash
   ]
 }
 ```
+
+<back-to-top />

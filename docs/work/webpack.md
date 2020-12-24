@@ -7,4 +7,16 @@
 url-loader: 文件大小（单位 byte）低于指定的限制时，可以返回一个 DataURL（base64）,减少Http请求
 .limit: 指定最小限制
 
+```js
+chainWebpack: config => {
+  config.module
+    .rule('images')
+    .use('url-loader')
+    .loader('url-loader')
+    .tap(options => Object.assign(options, {
+      limit: 1024 * 10 * 2 // 第一次设置10M,上线很久发现有个别用户出现icon不展示，*2处理后正常展示
+    }))
+}
+```
+
 注：webpack在打包时会对组件库的字体图标进行打包，如果limit太小webpack就不会对其进行转换，至于具体为啥至于极个别用户无法请求到字体图标，为啥不进行转换就请求不到还没找到合理的解释，问题就这么解决了。

@@ -31,7 +31,8 @@ module.exports = {
           collapsable: true,
           children: [
             'vue/basic',
-            'vue/vue_ts'
+            'vue/vue_ts',
+            'vue/vue3'
           ]
         },
         {
@@ -46,7 +47,15 @@ module.exports = {
           title: 'webpack',
           collapsable: true,
           children: [
-            'webpack/api'
+            'webpack/config'
+          ]
+        },
+        {
+          title: 'http',
+          collapsable: true,
+          children: [
+            'http/cookie',
+            'http/https'
           ]
         },
         {
@@ -60,7 +69,8 @@ module.exports = {
           title: 'tools',
           collapsable: true,
           children: [
-            'tools/npx'
+            'tools/npx',
+            'tools/lighthouse'
           ]
         },
         {
@@ -74,7 +84,8 @@ module.exports = {
           title: 'work',
           collapsable: true,
           children: [
-            'work/ie'
+            'work/ie',
+            'work/webpack'
           ]
         }
       ]
